@@ -6,8 +6,8 @@
 
 <style>
 	img#cimg{
-		height: 15vh;
-		width: 15vh;
+		height: 16vh;
+		width: 16vh;
 		object-fit: cover;
 		border-radius: 100% 100%;
 	}
