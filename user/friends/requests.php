@@ -8,7 +8,7 @@
     }
 </style>
 <div class="mx-0 py-5 px-3 mx-ns-4 bg-gradient-purple shadow blur d-flex w-100 justify-content-center align-items-center flex-column">
-	<h3 class="text-center text-light font-weight-bolder">Friend Requests</h3>
+	<h3 class="text-center text-light font-weight-bolder">Friend Request</h3>
 </div>
 <div class="row justify-content-center" style="margin-top:-2em;">
 	<div class="col-lg-10 col-md-11 col-sm-12 col-xs-12">
