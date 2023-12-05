@@ -11,7 +11,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 ?>
 <style>
 	#upload-images{
-		height:40em;
+		height:50em;
 		width:100%;
 		display:flex;
 		flex-direction:column;
