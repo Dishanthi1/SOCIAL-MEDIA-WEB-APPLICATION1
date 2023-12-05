@@ -10,7 +10,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 			$qry_like = $conn->query("SELECT post_id FROM `like_list` where post_id = '{$id}' and member_id = '{$_settings->userdata('id')}'")->num_rows > 0;
 		}
     }else{
-        echo '<script> alert("Post ID is invalid."); location.replace("./?page=user/profile");</script>';
+        echo '<script> alert("Post ID is invalid."); location.replace("./?page=use/profile");</script>';
     }
 }else{
     echo '<script> alert("Post ID is required."); location.replace("./?page=user/profile");</script>';
