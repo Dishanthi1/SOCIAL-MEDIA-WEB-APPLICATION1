@@ -65,7 +65,7 @@
 <script>
 	$(document).ready(function(){
 		$('.delete_data').click(function(){
-			_conf("Are you sure to delete this post permanently?","delete_post",[$(this).attr('data-id')])
+			_conf("Are you sure  delete this post permanently?","delete_post",[$(this).attr('data-id')])
 		})
 		$('.table').dataTable({
 			columnDefs: [
