@@ -12,7 +12,7 @@
         <div class="container-fluid">
 			<table class="table table-hover table-striped table-bordered" id="list">
 				<colgroup>
-					<col width="5%">
+					<col width="10%">
 					<col width="15%">
 					<col width="20%">
 					<col width="30%">
