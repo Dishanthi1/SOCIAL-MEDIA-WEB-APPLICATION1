@@ -23,7 +23,7 @@
       <div class="info-box">
         <span class="info-box-icon bg-gradient-primary elevation-1"><i class="fas fa-image"></i></span>
         <div class="info-box-content">
-          <span class="info-box-text">Total Posts</span>
+          <span class="info-box-text">Total Post</span>
           <span class="info-box-number">
             <?php 
               $posts = $conn->query("SELECT * FROM post_list")->num_rows;
