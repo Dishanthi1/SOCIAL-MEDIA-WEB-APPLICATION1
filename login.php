@@ -5,7 +5,7 @@ class Login extends DBConnection {
 	public function __construct(){
 		global $_settings;
 		$this->settings = $_settings;
-
+<!-----------------LOGIN------------>
 		parent::__construct();
 		ini_set('display_error', 1);
 	}
