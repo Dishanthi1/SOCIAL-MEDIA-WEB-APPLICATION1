@@ -28,7 +28,7 @@
       <p class="login-box-msg">Please enter your credentials</p>
       <form id="login-frm" action="" method="post">
         <div class="input-group mb-3">
-          <input type="text" class="form-control" name="username" autofocus placeholder="Username">
+          <input type="text" class="form-control" name="userName" autofocus placeholder="Username">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-user"></span>
