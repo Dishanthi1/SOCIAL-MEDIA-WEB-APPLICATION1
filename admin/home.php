@@ -5,7 +5,7 @@
         <div class="info-box">
           <span class="info-box-icon bg-gradient-secondary elevation-1"><i class="fas fa-users"></i></span>
           <div class="info-box-content">
-            <span class="info-box-text">Total Members</span>
+            <span class="info-box-text">Total Member</span>
             <span class="info-box-number">
               <?php 
                 $member = $conn->query("SELECT * FROM member_list")->num_rows;
