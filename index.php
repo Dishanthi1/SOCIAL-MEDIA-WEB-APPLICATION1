@@ -1,11 +1,18 @@
-<?php require_once('../config.php'); ?>
+<?php require_once('./../config.php'); ?>
  <!DOCTYPE html>
 <html lang="en" class="" style="height: auto;">
 <?php require_once('inc/header.php') ?>
-  <body class="sidebar-mini layout-fixed control-sidebar-slide-open layout-navbar-fixed sidebar-mini-md sidebar-mini-xs text-sm" data-new-gr-c-s-check-loaded="14.991.0" data-gr-ext-installed="" style="height: auto;">
+<style>
+  body>.wrapper>.content-wrapper{
+    background-image:url('<?= validate_image($_settings->info('cover')) ?>');
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+  }
+</style>
+  <body class="layout-top-nav text-sm layout-navbar-fixed" data-new-gr-c-s-check-loaded="14.991.0" data-gr-ext-installed="" style="height: auto;">
     <div class="wrapper">
      <?php require_once('inc/topBarNav.php') ?>
-     <?php require_once('inc/navigation.php') ?>
      <?php if($_settings->chk_flashdata('success')): ?>
     <script>
       alert_toast("<?php echo $_settings->flashdata('success') ?>",'success')
@@ -13,11 +20,11 @@
     <?php endif;?>      
      <?php $page = isset($_GET['page']) ? $_GET['page'] : 'home';  ?>
       <!-- Content Wrapper. Contains page content -->
-      <div class="content-wrapper  pt-3" style="min-height: 567.854px;">
+      <div class="content-wrapper  pt-3" style="">
      
         <!-- Main content -->
         <section class="content  text-dark">
-          <div class="container-fluid">
+          <div class="container">
             <?php 
               if(!file_exists($page.".php") && !is_dir($page)){
                   include '404.html';
