@@ -1,132 +1,83 @@
-<?php
-require_once '../config.php';
-class Login extends DBConnection {
-	private $settings;
-	public function __construct(){
-		global $_settings;
-		$this->settings = $_settings;
+<?php require_once('../config.php') ?>
+<!DOCTYPE html>
+<html lang="en" class="" style="height: auto;">
+ <?php require_once('inc/header.php') ?>
+<body class="hold-transition login-page">
+  <script>
+    start_loader()
+  </script>
+  <style>
+    body{
+      background-image: url("<?php echo validate_image($_settings->info('cover')) ?>");
+      background-size:cover;
+      background-repeat:no-repeat;
+      backdrop-filter: contrast(1);
+    }
+    #page-title{
+      text-shadow: 6px 4px 7px black;
+      font-size: 3.5em;
+      color: #fff4f4 !important;
+      background: #8080801c;
+    }
+  </style>
+  <h1 class="text-center text-white px-4 py-5" id="page-title"><b><?php echo $_settings->info('name') ?></b></h1>
+<div class="login-box">
+  <!-- /.login-logo -->
+  <div class="card card-navy my-2">
+    <div class="card-body">
+      <p class="login-box-msg">Please enter your credentials</p>
+      <form id="login-frm" action="" method="post">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" name="username" autofocus placeholder="Username">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" class="form-control"  name="password" placeholder="Password">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-8">
+            <a href="<?php echo base_url ?>">Go to Website</a>
+          </div>
+          <!-- /.col -->
+          <div class="col-4">
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+      <!-- /.social-auth-links -->
 
-		parent::__construct();
-		ini_set('display_error', 1);
-	}
-	public function __destruct(){
-		parent::__destruct();
-	}
-	public function index(){
-		echo "<h1>Access Denied</h1> <a href='".base_url."'>Go Back.</a>";
-	}
-	public function login(){
-		extract($_POST);
+      <!-- <p class="mb-1">
+        <a href="forgot-password.html">I forgot my password</a>
+      </p> -->
+      
+    </div>
+    <!-- /.card-body -->
+  </div>
+  <!-- /.card -->
+</div>
+<!-- /.login-box -->
 
-		$stmt = $this->conn->prepare("SELECT * from users where username = ? and password = ? and `type` != 3 ");
-		$password = md5($password);
-		$stmt->bind_param('ss',$username,$password);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		if($result->num_rows > 0){
-			foreach($result->fetch_array() as $k => $v){
-				if(!is_numeric($k) && $k != 'password'){
-					$this->settings->set_userdata($k,$v);
-				}
+<!-- jQuery -->
+<script src="<?= base_url ?>plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="<?= base_url ?>plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="<?= base_url ?>dist/js/adminlte.min.js"></script>
 
-			}
-			$this->settings->set_userdata('login_type',1);
-		return json_encode(array('status'=>'success'));
-		}else{
-		return json_encode(array('status'=>'incorrect','last_qry'=>"SELECT * from users where username = '$username' and password = md5('$password') "));
-		}
-	}
-	public function logout(){
-		if($this->settings->sess_des()){
-			redirect('admin/login.php');
-		}
-	}
-	
-	public function user_login(){
-		extract($_POST);
-		$stmt = $this->conn->prepare("SELECT * from member_list where `email` = ? and password = ? and `status` != 3 ");
-		$password = md5($password);
-		$stmt->bind_param('ss',$email,$password);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		if($result->num_rows > 0){
-			$data = $result->fetch_array();
-			foreach($data as $k => $v){
-				if(!is_numeric($k) && $k != 'password'){
-					$this->settings->set_userdata($k,$v);
-				}
-
-			}
-			$this->settings->set_userdata('status',$data['status']);
-			$this->settings->set_userdata('login_type',3);
-		return json_encode(array('status'=>'success'));
-		}else{
-		return json_encode(array('status'=>'incorrect','last_qry'=>"SELECT * from member_list where `email` = '$email' and password = md5('$password') "));
-		}
-	}
-	public function user_logout(){
-		if($this->settings->sess_des()){
-			redirect('user/login.php');
-		}
-	}
-	function login_agent(){
-		extract($_POST);
-		$stmt = $this->conn->prepare("SELECT * from agent_list where email = ? and `password` = ? and delete_flag = 0 ");
-		$password = md5($password);
-		$stmt->bind_param('ss',$email,$password);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		if($result->num_rows > 0){
-			$res = $result->fetch_array();
-			if($res['status'] == 1){
-				foreach($res as $k => $v){
-					$this->settings->set_userdata($k,$v);
-				}
-				$this->settings->set_userdata('login_type',2);
-				$resp['status'] = 'success';
-			}else{
-				$resp['status'] = 'failed';
-				$resp['msg'] = 'Your Account has been blocked.';
-			}
-		}else{
-		$resp['status'] = 'failed';
-		$resp['msg'] = 'Incorrect Email or Password';
-		}
-		if($this->conn->error){
-			$resp['status'] = 'failed';
-			$resp['_error'] = $this->conn->error;
-		}
-		return json_encode($resp);
-	}
-	public function logout_agent(){
-		if($this->settings->sess_des()){
-			redirect('agent');
-		}
-	}
-}
-$action = !isset($_GET['f']) ? 'none' : strtolower($_GET['f']);
-$auth = new Login();
-switch ($action) {
-	case 'login':
-		echo $auth->login();
-		break;
-	case 'logout':
-		echo $auth->logout();
-		break;
-	case 'user_login':
-		echo $auth->user_login();
-		break;
-	case 'user_logout':
-		echo $auth->user_logout();
-		break;
-	case 'login_agent':
-		echo $auth->login_agent();
-		break;
-	case 'logout_agent':
-		echo $auth->logout_agent();
-		break;
-	default:
-		echo $auth->index();
-		break;
-}
-
+<script>
+  $(document).ready(function(){
+    end_loader();
+  })
+</script>
+</body>
+</html>
