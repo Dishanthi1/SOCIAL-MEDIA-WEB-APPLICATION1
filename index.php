@@ -1,100 +1,181 @@
-
 <?php if($_settings->chk_flashdata('success')): ?>
 <script>
 	alert_toast("<?php echo $_settings->flashdata('success') ?>",'success')
 </script>
 <?php endif;?>
-<div class="card card-outline rounded-0 card-navy">
-	<div class="card-header">
-		<h3 class="card-title">List of Posts</h3>
-	</div>
-	<div class="card-body">
-        <div class="container-fluid">
-			<table class="table table-hover table-striped table-bordered" id="list">
-				<colgroup>
-					<col width="5%">
-					<col width="15%">
-					<col width="20%">
-					<col width="30%">
-					<col width="10%">
-					<col width="10%">
-					<col width="10%">
-				</colgroup>
-				<thead>
-					<tr>
-						<th>#</th>
-						<th>Date Created</th>
-						<th>Member</th>
-						<th>Caption</th>
-						<th>Likes</th>
-						<th>Comments</th>
-						<th>Action</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php 
-					$i = 1;
-						$qry = $conn->query("SELECT p.*, concat(m.firstname, ' ', coalesce(concat(m.middlename,' '),''),m.lastname) as `name`, m.avatar, COALESCE((SELECT count(member_id) FROM `like_list` where post_id = p.id),0) as `likes`, COALESCE((SELECT count(member_id) FROM `comment_list` where post_id = p.id),0) as `comments` FROM post_list p inner join `member_list` m on p.member_id = m.id  order by unix_timestamp(p.date_updated) desc");
-						while($row = $qry->fetch_assoc()):
-					?>
-						<tr>
-							<td class="text-center"><?php echo $i++; ?></td>
-							<td><?php echo date("Y-m-d H:i",strtotime($row['date_created'])) ?></td>
-							<td><?php echo $row['name'] ?></td>
-							<td class=""><p class="m-0 truncate-1"><?= $row['caption'] ?></p></td>
-							<td class="text-right"><?php echo format_num($row['likes']) ?></td>
-							<td class="text-right"><?php echo format_num($row['comments']) ?></td>
-							<td align="center">
-								 <button type="button" class="btn btn-flat p-1 btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown">
-				                  		Action
-				                    <span class="sr-only">Toggle Dropdown</span>
-				                  </button>
-				                  <div class="dropdown-menu" role="menu">
-				                    <a class="dropdown-item view_data" href="./?page=posts/view_post&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-dark"></span> View</a>
-				                    <div class="dropdown-divider"></div>
-				                    <a class="dropdown-item delete_data" href="javascript:void(0)" data-id="<?php echo $row['id'] ?>"><span class="fa fa-trash text-danger"></span> Delete</a>
-				                  </div>
-							</td>
-						</tr>
-					<?php endwhile; ?>
-				</tbody>
-			</table>
+
+<style>
+	img#cimg{
+		height: 15vh;
+		width: 15vh;
+		object-fit: cover;
+		border-radius: 100% 100%;
+	}
+	img#cimg2{
+		height: 50vh;
+		width: 100%;
+		object-fit: contain;
+		/* border-radius: 100% 100%; */
+	}
+</style>
+<div class="col-lg-12">
+	<div class="card card-outline rounded-0 card-navy">
+		<div class="card-header">
+			<h5 class="card-title">System Information</h5>
+			<!-- <div class="card-tools">
+				<a class="btn btn-block btn-sm btn-default btn-flat border-navy new_department" href="javascript:void(0)"><i class="fa fa-plus"></i> Add New</a>
+			</div> -->
 		</div>
+		<div class="card-body">
+			<form action="" id="system-frm">
+				<div id="msg" class="form-group"></div>
+				<div class="form-group">
+					<label for="name" class="control-label">System Name</label>
+					<input type="text" class="form-control form-control-sm" name="name" id="name" value="<?php echo $_settings->info('name') ?>">
+				</div>
+				<div class="form-group">
+					<label for="short_name" class="control-label">System Short Name</label>
+					<input type="text" class="form-control form-control-sm" name="short_name" id="short_name" value="<?php echo  $_settings->info('short_name') ?>">
+				</div>
+			<!-- <div class="form-group">
+				<label for="" class="control-label">Welcome Content</label>
+	             <textarea name="content[welcome]" id="" cols="30" rows="2" class="form-control summernote"><?php echo  is_file(base_app.'welcome.html') ? file_get_contents(base_app.'welcome.html') : "" ?></textarea>
+			</div>
+			<div class="form-group">
+				<label for="" class="control-label">About Us</label>
+	             <textarea name="content[about]" id="" cols="30" rows="2" class="form-control summernote"><?php echo  is_file(base_app.'about.html') ? file_get_contents(base_app.'about.html') : "" ?></textarea>
+			</div> -->
+			<div class="form-group">
+				<label for="" class="control-label">System Logo</label>
+				<div class="custom-file">
+	              <input type="file" class="custom-file-input rounded-circle" id="customFile1" name="img" onchange="displayImg(this,$(this))">
+	              <label class="custom-file-label" for="customFile1">Choose file</label>
+	            </div>
+			</div>
+			<div class="form-group d-flex justify-content-center">
+				<img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" id="cimg" class="img-fluid img-thumbnail">
+			</div>
+			<div class="form-group">
+				<label for="" class="control-label">Website Cover</label>
+				<div class="custom-file">
+	              <input type="file" class="custom-file-input rounded-circle" id="customFile2" name="cover" onchange="displayImg2(this,$(this))">
+	              <label class="custom-file-label" for="customFile2">Choose file</label>
+	            </div>
+			</div>
+			<div class="form-group d-flex justify-content-center">
+				<img src="<?php echo validate_image($_settings->info('cover')) ?>" alt="" id="cimg2" class="img-fluid img-thumbnail">
+			</div>
+			<div class="form-group">
+				<label for="" class="control-label">Banner Images</label>
+				<div class="custom-file">
+	              <input type="file" class="custom-file-input rounded-circle" id="customFile3" name="banners[]" multiple accept=".png,.jpg,.jpeg" onchange="displayImg3(this,$(this))">
+	              <label class="custom-file-label" for="customFile3">Choose file</label>
+	            </div>
+				<small><i>Choose to upload new banner immages</i></small>
+			</div>
+			<?php 
+            $upload_path = "uploads/banner";
+            if(is_dir(base_app.$upload_path)): 
+			$file= scandir(base_app.$upload_path);
+                foreach($file as $img):
+                    if(in_array($img,array('.','..')))
+                        continue;
+                    
+                
+            ?>
+                <div class="d-flex w-100 align-items-center img-item">
+                    <span><img src="<?php echo base_url.$upload_path.'/'.$img."?v=".(time()) ?>" width="150px" height="100px" style="object-fit:cover;" class="img-thumbnail" alt=""></span>
+                    <span class="ml-4"><button class="btn btn-sm btn-default text-danger rem_img" type="button" data-path="<?php echo base_app.$upload_path.'/'.$img ?>"><i class="fa fa-trash"></i></button></span>
+                </div>
+            <?php endforeach; ?>
+            <?php endif; ?>
+			</form>
+		</div>
+		<div class="card-footer">
+			<div class="col-md-12">
+				<div class="row">
+					<button class="btn btn-sm btn-primary" form="system-frm">Update</button>
+				</div>
+			</div>
+		</div>
+
 	</div>
 </div>
 <script>
-	$(document).ready(function(){
-		$('.delete_data').click(function(){
-			_conf("Are you sure to delete this post permanently?","delete_post",[$(this).attr('data-id')])
-		})
-		$('.table').dataTable({
-			columnDefs: [
-					{ orderable: false, targets: [4] }
-			],
-			order:[0,'asc']
-		});
-		$('.dataTable td,.dataTable th').addClass('py-1 px-2 align-middle')
-	})
-	function delete_post($id){
-		start_loader();
-		$.ajax({
-			url:_base_url_+"classes/Master.php?f=delete_post",
-			method:"POST",
-			data:{id: $id},
-			dataType:"json",
-			error:err=>{
-				console.log(err)
-				alert_toast("An error occured.",'error');
-				end_loader();
-			},
-			success:function(resp){
-				if(typeof resp== 'object' && resp.status == 'success'){
-					location.reload();
-				}else{
-					alert_toast("An error occured.",'error');
-					end_loader();
-				}
-			}
-		})
+	function displayImg(input,_this) {
+	    if (input.files && input.files[0]) {
+	        var reader = new FileReader();
+	        reader.onload = function (e) {
+	        	$('#cimg').attr('src', e.target.result);
+	        	_this.siblings('.custom-file-label').html(input.files[0].name)
+	        }
+
+	        reader.readAsDataURL(input.files[0]);
+	    }
 	}
+	function displayImg2(input,_this) {
+	    if (input.files && input.files[0]) {
+	        var reader = new FileReader();
+	        reader.onload = function (e) {
+	        	_this.siblings('.custom-file-label').html(input.files[0].name)
+	        	$('#cimg2').attr('src', e.target.result);
+	        }
+
+	        reader.readAsDataURL(input.files[0]);
+	    }
+	}
+	function displayImg3(input,_this) {
+		var fnames = [];
+		Object.keys(input.files).map(function(k){
+			fnames.push(input.files[k].name)
+
+		})
+		_this.siblings('.custom-file-label').html(fnames.join(", "))
+	}
+	function delete_img($path){
+        start_loader()
+        
+        $.ajax({
+            url: _base_url_+'classes/Master.php?f=delete_img',
+            data:{path:$path},
+            method:'POST',
+            dataType:"json",
+            error:err=>{
+                console.log(err)
+                alert_toast("An error occured while deleting an Image","error");
+                end_loader()
+            },
+            success:function(resp){
+                $('.modal').modal('hide')
+                if(typeof resp =='object' && resp.status == 'success'){
+                    $('[data-path="'+$path+'"]').closest('.img-item').hide('slow',function(){
+                        $('[data-path="'+$path+'"]').closest('.img-item').remove()
+                    })
+                    alert_toast("Image Successfully Deleted","success");
+                }else{
+                    console.log(resp)
+                    alert_toast("An error occured while deleting an Image","error");
+                }
+                end_loader()
+            }
+        })
+    }
+	$(document).ready(function(){
+		$('.rem_img').click(function(){
+            _conf("Are sure to delete this image permanently?",'delete_img',["'"+$(this).attr('data-path')+"'"])
+        })
+		 $('.summernote').summernote({
+		        height: 200,
+		        toolbar: [
+		            [ 'style', [ 'style' ] ],
+		            [ 'font', [ 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear'] ],
+		            [ 'fontname', [ 'fontname' ] ],
+		            [ 'fontsize', [ 'fontsize' ] ],
+		            [ 'color', [ 'color' ] ],
+		            [ 'para', [ 'ol', 'ul', 'paragraph', 'height' ] ],
+		            [ 'table', [ 'table' ] ],
+		            [ 'view', [ 'undo', 'redo', 'fullscreen', 'codeview', 'help' ] ]
+		        ]
+		    })
+	})
 </script>
