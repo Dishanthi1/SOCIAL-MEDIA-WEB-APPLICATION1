@@ -1,3 +1,4 @@
+<!----------------Master------------>
 <?php
 require_once('../config.php');
 Class Master extends DBConnection {
