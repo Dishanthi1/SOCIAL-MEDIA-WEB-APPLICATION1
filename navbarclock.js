@@ -1,4 +1,4 @@
-/* Navbar ClockDate */
+
 function startTime() {
     var today = new Date();
     var hr = today.getHours();
